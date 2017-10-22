@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html class='no-js' lang='en'>
+  <head>
+    <meta charset='utf-8'>
+    <meta content='IE=edge,chrome=1' http-equiv='X-UA-Compatible'>
+    <title>Movimientos</title>
+    <meta content='lab2023' name='author'>
+    <meta content='' name='description'>
+    <meta content='' name='keywords'>
+    <link href="assets/stylesheets/application-a07755f5.css" rel="stylesheet" type="text/css" /><link href="//netdna.bootstrapcdn.com/font-awesome/3.2.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+    <link href="assets/images/favicon.ico" rel="icon" type="image/ico" />
+
+  </head>
+  <body class='main page'>
+    <!-- Navbar -->
+    <div class='navbar navbar-default' id='navbar'>
+      <a class='navbar-brand' href='#'>
+        <i class='icon-beer'></i>
+        Sismo
+      </a>
+    </div>
+    <div id='wrapper'>
+      <!-- Sidebar -->
+      <section id='sidebar'>
+        <i class='icon-align-justify icon-large' id='toggle'></i>
+        <ul id='dock'>
+          <li class='active launcher'>
+            <i class='icon-table'></i>
+            <a href="tables.html">Movimientos</a>
+          </li>
+        </ul>
+        <div data-toggle='tooltip' id='beaker' title='Luar Innovations'></div>
+      </section>
+      <!-- Tools -->
+      <section id='tools'>
+        <ul class='breadcrumb' id='breadcrumb'>
+          <li class='title'>Sismos</li>
+        </ul>
+      </section>
+      <!-- Content -->
+      <div id='content'>
+        <div class='panel panel-default grid'>
+          <div class='panel-heading'>
+            <i class='icon-table icon-large'></i>
+            Últimos 10 acontecimientos
+            <h1><p id="hora"></p></h1>
+            <script>
+            var myVar = setInterval(myTimer, 500);
+            var data_aux;
+            var lineas="";
+            entro=true;
+            function myTimer() {
+              var d = new Date();
+              var n=1;
+              var linea="";
+              document.getElementById("hora").innerHTML = "Hora actual: " + d.toLocaleTimeString();
+              $.ajax({
+                url: "https://earthquake.usgs.gov/fdsnws/event/1/query?format=text&starttime=2017-09-25",
+                //url: "json.txt",
+                //cache: false,
+                success: function(data){
+                  filas = data.split("|");
+                  if(data == data_aux){
+                    //console.log('es igual');
+                  }else{
+                    for (var i = 0; i < filas.length; i++) {
+                      if(n<11){
+                        if(i==0){
+                          linea = filas[i];
+                        }else{
+                          linea = linea+"|"+filas[i];
+                        }
+                        if(i==12*n){
+                          if(n==10){
+                            //alert('Ultimo sismo' + filas[20]);
+                            sonar();
+                            entro=false;
+                          }
+                          lineas = lineas + '' + linea;
+
+                          eventid = document.getElementsByTagName('td')[6*(n-1)];
+                          eventid.innerHTML=filas[12*n+8];
+
+          								fecha = document.getElementsByTagName('td')[(n+(5*(n-1)))];
+                          //fecha = document.getElementsByTagName('td')[(n+(5*(n-1)))];
+          								fecha.innerHTML=filas[12*n+1];
+                          //filas[12*n+1]='2017-09-25T6:42:48.490';
+                          //console.log('2017-09-25T6:42:48.490');
+                          var fecha_separada = filas[12*n+1].split('T');
+                          //console.log(date[1] + '|' + date[0]);
+                          var hora_separada = fecha_separada[1].split(':');
+                          var seg_separado = hora_separada[2].split('.');
+                          var seg_real = seg_separado[0];
+
+                          fecha_s = fecha_separada[0].split('-');
+                          fecha_mes = fecha_s[1];
+                          fecha_dia = fecha_s[2];
+                          if((hora_separada[0]-6)<0){
+                            //alert(fecha_dia-1);
+                            //alert((hora_separada[0]-6+23)+':'+hora_separada[1]+':'+seg_real + ' | ' + fecha_dia-1+'-'+fecha_mes+'-'+fecha_s[0])
+                            fecha.innerHTML= (hora_separada[0]-6+24)+':'+hora_separada[1]+':'+seg_real+ ' | ' +(fecha_dia-1)+'-'+fecha_mes+'-'+fecha_s[0];
+                          }else{
+                            if((hora_separada[0]-6)==0){
+                              fecha.innerHTML= hora_separada[0]-6+'0:'+hora_separada[1]+':'+seg_real + ' | ' + fecha_dia+'-'+fecha_mes+'-'+fecha_s[0];
+                            }else{
+                              fecha.innerHTML= hora_separada[0]-6+':'+hora_separada[1]+':'+seg_real + ' | ' + fecha_dia+'-'+fecha_mes+'-'+fecha_s[0];
+                            }
+                            //fecha.innerHTML= hora_separada[0]-6+':'+hora_separada[1]+':'+seg_real + ' | ' + fecha_separada[0];
+                          }
+                          //fecha.innerHTML= fecha_separada[1] + '|' + fecha_separada[0];
+          								profundidad = document.getElementsByTagName('td')[(n+1+(5*(n-1)))];
+          								profundidad.innerHTML=filas[12*n+4]+' Km';
+
+          								magnitud = document.getElementsByTagName('td')[(n+2+(5*(n-1)))];
+          								medida = document.getElementsByTagName('td')[(n+3+(5*(n-1)))];
+          								magnitud.innerHTML=filas[12*n+10] + '-' + filas[12*n+9];
+
+          								lugar = document.getElementsByTagName('td')[(n+3+(5*(n-1)))];
+          								if(n==11){
+                            //filas[12*n+12] = filas[12*n+12].substring(0,filas[12*n+12].length-10);
+                            i=filas.length;
+                          }else{
+                            filas[12*n+12] = filas[12*n+12].substring(0,filas[12*n+12].length-10);
+                          }
+                          //filas[12*n+12] = filas[12*n+12].substring(0,filas[12*n+12].length-10);
+                          lugar.innerHTML=filas[12*n+12];
+
+                          //table = document.getElementById('tabla');
+								          //celda = document.getElementsByTagName('td')[6];
+								          //celda.innerHTML=filas[25];
+								          //filas[32] = filas[32].substring(0,filas[32].length-1);
+                          //celda.innerHTML=filas[32];
+                          linea="";
+                          n=n+1;
+                        }else{
+
+                        }
+                      }
+                    }
+                  }
+                  data_aux = data;
+                }
+              });
+            }
+            function sonar(){
+              if(entro==false){
+                $('<audio id="sonido"><source src="Alerta.ogg" type="audio/ogg"><source src="Alerta.mp3" type="audio/mpeg"><source src="Alerta.aac" type="audio/wav"></audio>').appendTo('body');
+                $('#sonido')[0].play();
+                //alert('Sismo detectado a las' + new date());
+              }
+            }
+            </script>
+          </div>
+          <div class='panel-body filters'>
+            <div class='row'>
+              <div class='col-md-3'>
+                <div class='input-group'>
+                  <input class='form-control' placeholder='Busqueda rápida' type='text'>
+                  <span class='input-group-btn'>
+                    <button class='btn' type='button'>
+                      <i class='icon-search'></i>
+                    </button>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <table class='table' id='tabla'>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Fecha</th>
+                <th>Profundidad/Km</th>
+                <th>Magnitud|Escala</th>
+				<th>Lugar</th>
+                <th class='actions'>
+                  Ubicación
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+
+              <tr class='warning'>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+				<td></td>
+				<td class='action' ALIGN="CENTER">
+                  <a class='btn btn-success' data-toggle='tooltip' href='#' title='Ubicación'>
+                    <i class='icon-zoom-in'></i>
+                  </a>
+                </td>
+              </tr>
+
+              <tr class='success'>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+				<td></td>
+				<td class='action' ALIGN="CENTER">
+                  <a class='btn btn-success' data-toggle='tooltip' href='javascript:alert("hola")' title='Ubicación'>
+                    <i class='icon-zoom-in'></i>
+                  </a>
+                </td>
+              </tr>
+
+			  <tr class='success'>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+				<td></td>
+				<td class='action' ALIGN="CENTER">
+                  <a class='btn btn-success' data-toggle='tooltip' href='#' title='Ubicación'>
+                    <i class='icon-zoom-in'></i>
+                  </a>
+                </td>
+              </tr>
+
+			  <tr class='success'>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+				<td></td>
+				<td class='action' ALIGN="CENTER">
+                  <a class='btn btn-success' data-toggle='tooltip' href='#' title='Ubicación'>
+                    <i class='icon-zoom-in'></i>
+                  </a>
+                </td>
+              </tr>
+
+			  <tr class='success'>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+				<td></td>
+				<td class='action' ALIGN="CENTER">
+                  <a class='btn btn-success' data-toggle='tooltip' href='#' title='Ubicación'>
+                    <i class='icon-zoom-in'></i>
+                  </a>
+                </td>
+              </tr>
+
+			  <tr class='success'>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+				<td></td>
+				<td class='action' ALIGN="CENTER">
+                  <a class='btn btn-success' data-toggle='tooltip' href='#' title='Ubicación'>
+                    <i class='icon-zoom-in'></i>
+                  </a>
+                </td>
+              </tr>
+
+              <tr class='success'>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+				<td></td>
+				<td class='action' ALIGN="CENTER">
+                  <a class='btn btn-success' data-toggle='tooltip' href='#' title='Ubicación'>
+                    <i class='icon-zoom-in'></i>
+                  </a>
+                </td>
+              </tr>
+
+			  <tr class='success'>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+				<td></td>
+				<td class='action' ALIGN="CENTER">
+                  <a class='btn btn-success' data-toggle='tooltip' href='#' title='Ubicación'>
+                    <i class='icon-zoom-in'></i>
+                  </a>
+                </td>
+              </tr>
+
+			  <tr class='success'>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+				<td></td>
+				<td class='action' ALIGN="CENTER">
+                  <a class='btn btn-success' data-toggle='tooltip' href='#' title='Ubicación'>
+                    <i class='icon-zoom-in'></i>
+                  </a>
+                </td>
+              </tr>
+
+			  <tr class='success'>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+				<td></td>
+				<td class='action' ALIGN="CENTER">
+                  <a class='btn btn-success' data-toggle='tooltip' href='#' title='Ubicación'>
+                    <i class='icon-zoom-in'></i>
+                  </a>
+                </td>
+              </tr>
+
+			  </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <!-- Footer -->
+    <!-- Javascripts -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js" type="text/javascript"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js" type="text/javascript"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js" type="text/javascript"></script>
+    <script src="assets/javascripts/application-985b892b.js" type="text/javascript"></script>
+    <!-- Google Analytics -->
+    <script>
+      var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview']];
+      (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+      g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+      s.parentNode.insertBefore(g,s)}(document,'script'));
+    </script>
+  </body>
+</html>
