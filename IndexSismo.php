@@ -5,7 +5,8 @@
   
   <?php
      $Encabezado = include 'Head_Paginas.php';
-     echo $Encabezado;    
+     echo $Encabezado;   
+      
   ?>
 
   <script>
